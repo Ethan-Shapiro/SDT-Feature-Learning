@@ -15,13 +15,13 @@ def evaluate(model: GB_SDT, test_loader: DataLoader, device: torch.device):
         test_loader (DataLoader): DataLoader for the test dataset.
         device (torch.device): The device (CPU or GPU) to perform the evaluation on.
     """
-    model.eval()  # Set model to evaluation mode
+    model.eval()
     correct = 0
     total = 0
     with torch.no_grad():
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
-            output = model.predict(data)  # Assuming model has a predict method
+            output = model.predict(data)
             pred = output.argmax(dim=1, keepdim=True)
             correct += pred.eq(target.view_as(pred)).sum().item()
             total += target.size(0)
