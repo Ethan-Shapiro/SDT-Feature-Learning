@@ -8,8 +8,13 @@ usemathjax: true
 
 ## Introduction 🗒️
 ---
+Machine learning is in everything nowadays. It has revolutionized almost everything it has touched, from complex medical procedures, to netflix recommendations, to the path the chips you bought get to the store. Welcome to our journey through the transformative world of machine learning, a branch of artificial intelligence that teaches computers to learn from data, much like humans do from experience. At the forefront of this exciting adventure is the concept of feature learning—a cutting-edge technique that allows computers to automatically identify the most important pieces of information from the data they’re given. Coupled with this is our focus on soft decision trees, an innovative twist on traditional decision-making models, which are designed to be more flexible and intuitive, much like choosing a path based on probabilities rather than a simple yes or no answer.
+
+Central to our exploration are neural networks, sophisticated algorithms modeled after the human brain's architecture, enabling machines to think and learn with astonishing depth and complexity. These networks are the backbone of our ability to process and interpret vast amounts of data, making sense of the world in ways that were previously unimaginable. They are able to solve complex tasks like self-driving cars, automated surgery, and much more, yet their inner workings still mystify us. How they learn such important features are a mystery only beginning to be solved. So, as we delve into these concepts, we aim to make this cutting-edge technology understandable and accessible, shedding light on how it's transforming our world and why it's an exciting time to be at the intersection of technology and discovery. Join us as we embark on this enlightening journey, unraveling the mysteries of machine learning, feature learning, and making them understandable through soft decision trees.
+
 
 ## What's feature learning and why do we care about it? 🔎
+---
 
 <details>
 <summary>Neural Feature Matrix Details ⤵️</summary>
@@ -57,6 +62,7 @@ where \( \nabla f_i(h_i(x_p)) \) denotes the gradient of \( f_i \) with respect 
 ---
 
 ## Gradient Boosted Decision Trees 🌲
+---
 
 ## What can this mean for the future? 🔮
 ---
