@@ -1,0 +1,1 @@
+python train_sdt.py --dataset CELEBA --feature_idx 31 --epochs 150 --save_model_path celeba_31_smiling.pth --use_cuda        
