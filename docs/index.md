@@ -63,9 +63,15 @@ The term "soft" decision trees extends this concept further by incorporating ele
 
 ### MNIST 1️⃣
 
+The MNIST dataset, short for the Modified National Institute of Standards and Technology dataset, is a classic dataset in the field of machine learning and computer vision. It consists of 70,000 grayscale images of handwritten digits (0 through 9), split into a training set of 60,000 images and a test set of 10,000 images. Each image is 28x28 pixels, providing a simple yet effective arena for testing and benchmarking image processing systems and machine learning models. Due to its simplicity and the straightforward nature of the task it presents (digit recognition), MNIST has become a staple introductory dataset for those new to machine learning and deep learning. So if a model can't perform well on MNIST, it probably won't do well on more complex tasks.
+
 ### CelebA 🏆
 
+The CelebA (Celebrity Attributes) dataset is a large-scale face attributes dataset designed for various tasks in computer vision, including but not limited to face recognition, face attribute prediction, and face editing & synthesis. It contains more than 200,000 celebrity images, each annotated with 40 attribute labels (such as "Smiling," "Wearing Hat," etc.) and 5 landmark locations (points on the face like the corners of the eyes and the tip of the nose). The images in CelebA cover a wide range of poses, backgrounds, and lighting conditions, making it a challenging and versatile dataset for advanced machine learning models, especially those employing deep learning techniques. We use CelebA as it is a great benchmark for how well the model can learn features, as the different labels (like smiling) make it immediately obvious which part of the image to pay attention to.
+
 ### STL Star ⭐
+
+The STL-10 (Self Taught Learning 10) dataset is a rich resource for developing and benchmarking machine learning algorithms. It comprises 5,000 training images and 8,000 test images, divided into 10 pre-defined classes, with each image being a higher resolution (96x96 pixels) compared to many other standard datasets, allowing for more detailed feature extraction. In a specialized augmentation of this dataset, we introduced a black star drawn on images labeled as class 9, and a white star is drawn on all other images. This augmentation focuses the classification task not on the original content of the images but on the presence and color of the star, creating a simplified yet effective testbed for evaluating a model's ability to learn and distinguish specific, artificially introduced features. This approach strips down the complexity of image classification to a single, salient feature, enabling researchers to assess how well a model can identify and focus on relevant features for the task at hand, bypassing the distractions of the rest of the image content.
 
 ## Experiments 🧪
 ---
