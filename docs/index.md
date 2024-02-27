@@ -88,7 +88,7 @@ These Neural Feature Matrices of each classification task clearly show how the m
 
 The STL-10 (Self Taught Learning 10) dataset is a rich resource for developing and benchmarking machine learning algorithms. It comprises 5,000 training images and 8,000 test images, divided into 10 pre-defined classes, with each image being a higher resolution (96x96 pixels) compared to many other standard datasets, allowing for more detailed feature extraction. In a specialized augmentation of this dataset, we introduced a black star drawn on images labeled as class 9, and a white star is drawn on all other images. This augmentation focuses the classification task not on the original content of the images but on the presence and color of the star, creating a simplified yet effective testbed for evaluating a model's ability to learn and distinguish specific, artificially introduced features. This approach strips down the complexity of image classification to a single, salient feature, enabling researchers to assess how well a model can identify and focus on relevant features for the task at hand, bypassing the distractions of the rest of the image content.
 
-![STL Star Neural Feature Matrix](assets/stl_star_nfm.png)
+![STL Star Neural Feature Matrix](./assets/stl_star_nfm.png)
 
 
 ## Gradient Boosted Decision Trees 🌲
