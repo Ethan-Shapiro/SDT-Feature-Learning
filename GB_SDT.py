@@ -1,3 +1,4 @@
+from typing import Tuple
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
@@ -156,7 +157,7 @@ class GB_SDT:
 
         return tree
 
-    def evaluate(self, model: SDT, data_loader: DataLoader, criterion: torch.nn.Module) -> (float, float):
+    def evaluate(self, model: SDT, data_loader: DataLoader, criterion: torch.nn.Module) -> Tuple[float, float]:
         """
         Evaluates the model on a given dataset.
 
@@ -180,8 +181,9 @@ class GB_SDT:
                 output = model(data, is_training_data=False)
                 loss = criterion(output, target)
                 total_loss += loss.item() * data.size(0)
-                _, predicted = torch.max(output, 1)
-                correct_predictions += (predicted == target).sum().item()
+                pred = output.argmax(dim=1, keepdim=True)
+                target_indices = target.argmax(dim=1, keepdim=True)
+                correct_predictions += pred.eq(target_indices).sum().item()
                 total_samples += data.size(0)
 
         average_loss = total_loss / total_samples
@@ -207,10 +209,13 @@ class GB_SDT:
         X = X.to(self.device)
         ensemble_predictions = torch.zeros(
             X.size(0), self.output_dim).to(self.device)
-        for tree in self.trees:
+        for i, tree in enumerate(self.trees):
             tree.eval()
             output = tree(X)
-            ensemble_predictions += output
+            if i == 0:
+                ensemble_predictions += output
+            else:
+                ensemble_predictions += output * self.lr
 
         return F.softmax(ensemble_predictions, dim=1)
 

@@ -1,6 +1,7 @@
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, SubsetRandomSampler
+from dataset import *
 import numpy as np
 import argparse
 from GB_SDT import GB_SDT
@@ -37,8 +38,6 @@ def main(args):
         args: Command-line arguments.
     """
     # Parameters from args
-    input_dim = 28 * 28  # For MNIST
-    output_dim = 10  # Number of classes in MNIST
     n_trees = args.n_trees
     depth = args.depth
     lr = args.lr  # Learning rate for the ensemble update, not individual tree training
@@ -48,42 +47,39 @@ def main(args):
     batch_size = args.batch_size
     epochs = args.epochs
     log_interval = args.log_interval
-    use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda" if use_cuda else "cpu")
+    if args.use_cuda and torch.cuda.is_available():
+        device = torch.device('cuda')
+        args.use_cuda = True
+        print('Using CUDA')
+    else:
+        args.use_cuda = False
+        device = torch.device('cpu')
+        print('Using CPU')
 
-    # Data loading and augmentation setup
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,))
-    ])
-
-    # Dataset loading
-    full_train_dataset = datasets.MNIST(
-        '../data', train=True, download=True, transform=transform)
-    test_loader = DataLoader(datasets.MNIST(
-        '../data', train=False, transform=transform), batch_size=batch_size, shuffle=False)
-
-    # Splitting the dataset into training and validation
-    validation_split = 0.2
-    dataset_size = len(full_train_dataset)
-    indices = list(range(dataset_size))
-    split = int(np.floor(validation_split * dataset_size))
-    if args.shuffle:
-        np.random.seed(args.random_seed)
-        np.random.shuffle(indices)
-    train_indices, val_indices = indices[split:], indices[:split]
-
-    # Creating data loaders
-    train_loader = DataLoader(
-        full_train_dataset, batch_size=batch_size, sampler=SubsetRandomSampler(train_indices))
-    validation_loader = DataLoader(
-        full_train_dataset, batch_size=batch_size, sampler=SubsetRandomSampler(val_indices))
+    # Load datasets
+    if args.dataset == 'MNIST':
+        args.input_dim = 28 * 28  # MNIST images are 28x28
+        args.output_dim = 10
+        train_loader, val_loader, test_loader = get_mnist(
+            args.data_dir, batch_size, args.output_dim)
+    elif args.dataset == 'CELEBA':
+        args.input_dim = 96 * 96 * 3  # CELEBA images dimensions
+        args.output_dim = 2
+        train_loader, val_loader, test_loader = get_celeba(
+            feature_idx=args.feature_idx, data_dir=args.data_dir,
+            batch_size=args.batch_size, num_train=120_000, num_test=10_000)
+    elif args.dataset == 'STL_STAR':
+        args.input_dim = 96 * 96 * 3  # STL_STAR image size
+        args.output_dim = 2
+        train_loader, val_loader, test_loader = get_stl_star(
+            data_dir=args.data_dir, batch_size=args.batch_size)
 
     # Model initialization
-    model = GB_SDT(input_dim=input_dim, output_dim=output_dim, n_trees=n_trees, lr=lr, internal_lr=internal_lr,
-                   depth=depth, lamda=lamda, weight_decay=weight_decay, epochs=epochs, log_interval=log_interval, use_cuda=use_cuda)
+    model = GB_SDT(input_dim=args.input_dim, output_dim=args.output_dim, n_trees=n_trees, lr=lr, internal_lr=internal_lr,
+                   depth=depth, lamda=lamda, weight_decay=weight_decay, epochs=epochs,
+                   log_interval=log_interval, use_cuda=args.use_cuda)
     # Assuming this method exists within GB_SDT
-    model.train(train_loader, validation_loader, test_loader)
+    model.train(train_loader, val_loader, test_loader)
 
     # Testing the model
     evaluate(model, test_loader, device=device)
@@ -96,6 +92,12 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Train a GB_SDT model on MNIST.")
+    parser.add_argument('--data_dir', type=str, default=os.path.join(os.getcwd(),
+                        'datasets'), help='Directory for storing input data')
+    parser.add_argument('--dataset', type=str, choices=['MNIST',
+                        'CELEBA', 'STL_STAR'], default='MNIST', help='Dataset to use.')
+    parser.add_argument('--feature_idx', type=int, default=0,
+                        help='Feature index for CelebA dataset (only relevant for CelebA)')
     parser.add_argument('--n_trees', type=int, default=4,
                         help='Number of trees in the ensemble.')
     parser.add_argument('--depth', type=int, default=5,
@@ -119,6 +121,8 @@ if __name__ == "__main__":
     parser.add_argument('--random_seed', type=int, default=42,
                         help='Random seed for reproducibility.')
     parser.add_argument('--save_model_path', type=str,
-                        default='GB_SDT_model.pth', help='Path to save the trained model.')
+                        default='GB_SDT_celeba_smiling.pth', help='Path to save the trained model.')
+    parser.add_argument('--use_cuda', action='store_true',
+                        default=False, help='Enable CUDA if available.')
     args = parser.parse_args()
     main(args)

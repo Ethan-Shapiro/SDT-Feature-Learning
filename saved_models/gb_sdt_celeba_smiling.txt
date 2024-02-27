@@ -1,0 +1,1 @@
+python gb_sdt_train.py --dataset CELEBA --feature_idx 31 --lr 0.1 --epochs 150 --use_cuda

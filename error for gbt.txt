@@ -1,0 +1,12 @@
+Epoch: 77 Validation Accuracy: 86.28
+Early stopping triggered after 78 epochs.
+Test Loss: 0.3269, Test Accuracy: 87.74%
+Traceback (most recent call last):
+  File "C:\Repository\Soft-Decision-Tree\gb_sdt_train.py", line 128, in <module>
+    main(args)
+  File "C:\Repository\Soft-Decision-Tree\gb_sdt_train.py", line 85, in main
+    evaluate(model, test_loader, device=device)
+  File "C:\Repository\Soft-Decision-Tree\gb_sdt_train.py", line 27, in evaluate
+    correct += pred.eq(target.view_as(pred)).sum().item()
+                       ^^^^^^^^^^^^^^^^^^^^
+RuntimeError: shape '[128, 1]' is invalid for input of size 256
