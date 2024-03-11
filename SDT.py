@@ -189,7 +189,47 @@ class SDT(nn.Module):
         # Turn off gradients for input
         X.requires_grad_(False)
 
-        return nfm.cpu().numpy()  # Return NFM as a NumPy array for analysis
+        AGOP = nfm.T @ nfm
+
+        AGOP /= X.shape[0]
+
+        diagonal = torch.diag(AGOP)
+
+        return diagonal.cpu().numpy()
+
+    def old_compute_nfm(self, X):
+        # Ensure model is in evaluation mode for consistent output
+        self.eval()
+
+        # We need to enable gradients for input for NFM computation
+        X.requires_grad_(True)
+
+        # Forward pass through the model
+        mu, penalty = self._forward(X)
+        y_pred = self.leaf_nodes(mu)
+
+        # Initialize NFM as a zero tensor with the same size as the input
+        nfm = torch.zeros_like(X)
+
+        # Compute gradients for each output dimension
+        for i in range(self.output_dim):
+            self.zero_grad()  # Clear existing gradients
+            # Backpropagate from each output dimension
+            y_pred[:, i].sum().backward(retain_graph=True)
+
+            # Sum gradients for each feature across all samples
+            nfm += X.grad.data
+
+        # Divide by the number of output dimensions to get the average influence
+        nfm /= self.output_dim
+
+        # Detach the NFM from the current graph to prevent further gradient computation
+        nfm = nfm.detach()
+
+        # Turn off gradients for input
+        X.requires_grad_(False)
+
+        return nfm.cpu().numpy()
 
     def compute_nfm_for_target(model, data_loader, target_class, device):
         """

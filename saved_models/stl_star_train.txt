@@ -1,0 +1,1 @@
+python train_sdt.py --dataset STL_STAR --star-pos bottom_right --lr 0.0001 --epochs 3 --use_cuda 

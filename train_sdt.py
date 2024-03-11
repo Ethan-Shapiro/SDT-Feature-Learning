@@ -33,7 +33,7 @@ def train_and_evaluate(args):
         args.input_dim = 96 * 96 * 3  # STL_STAR image size
         args.output_dim = 2
         train_loader, val_loader, test_loader = get_stl_star(
-            data_dir=args.data_dir, batch_size=args.batch_size)
+            data_dir=args.data_dir, batch_size=args.batch_size, star_pos=args.star_pos)
 
     # Initialize model
     tree = SDT(args.input_dim, args.output_dim, args.depth,
@@ -116,6 +116,8 @@ if __name__ == "__main__":
                         'MNIST', 'CELEBA', 'STL_STAR'], default='MNIST', help='Dataset to use.')
     parser.add_argument('--feature_idx', type=int, default=0,
                         help='Feature index for CelebA dataset')
+    parser.add_argument('--star-pos', type=str, default='top_left',
+                        help='top_left or bottom_right for star location for STL_STAR')
     parser.add_argument('--input_dim', type=int, default=28*28,
                         help='Input dimension size. Will be overridden based on dataset.')
     parser.add_argument('--output_dim', type=int, default=10,
@@ -137,7 +139,7 @@ if __name__ == "__main__":
     parser.add_argument('--log_interval', type=int, default=100,
                         help='How many batches to wait before logging training status.')
     parser.add_argument('--save_model_path', type=str,
-                        default='stl_star_model.pth', help='Path to save the trained model.')
+                        default='stl_star_model_bottom_right.pth', help='Path to save the trained model.')
     parser.add_argument('--use_cuda', action='store_true',
                         default=False, help='Enable CUDA if available.')
     args = parser.parse_args()

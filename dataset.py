@@ -178,7 +178,7 @@ def get_mnist(data_dir, batch_size, output_dims):
     return train_loader, val_loader, test_loader
 
 
-def get_stl_star(data_dir: str, batch_size: int = 128, split_percentage: float = .8, num_train: int = float('inf'), num_test: int = float('inf')) -> tuple:
+def get_stl_star(data_dir: str, batch_size: int = 128, split_percentage: float = .8, num_train: int = float('inf'), num_test: int = float('inf'), star_pos: str = 'top_left') -> tuple:
     """
     Prepares the STL dataset with star shapes added for a binary classification task.
 
@@ -205,7 +205,7 @@ def get_stl_star(data_dir: str, batch_size: int = 128, split_percentage: float =
                               # train=True,
                               transform=transform,
                               download=True)
-    trainset = one_hot_stl_toy(trainset, num_samples=num_train)
+    trainset = one_hot_stl_toy(trainset, num_samples=num_train, star_pos=star_pos)
     trainset, valset = split(trainset, p=split_percentage)
     trainloader = DataLoader(trainset, batch_size=batch_size,
                              shuffle=True, num_workers=2)
@@ -216,7 +216,7 @@ def get_stl_star(data_dir: str, batch_size: int = 128, split_percentage: float =
                              split='test',
                              transform=transform,
                              download=True)
-    testset = one_hot_stl_toy(testset, num_samples=num_test)
+    testset = one_hot_stl_toy(testset, num_samples=num_test, star_pos=star_pos)
     testloader = DataLoader(testset, batch_size=batch_size,
                             shuffle=False, num_workers=2)
     print("Num Train: ", len(trainset), "Num Val: ", len(valset),
@@ -224,7 +224,7 @@ def get_stl_star(data_dir: str, batch_size: int = 128, split_percentage: float =
     return trainloader, valloader, testloader
 
 
-def one_hot_stl_toy(dataset: Dataset, num_samples: int = -1) -> list:
+def one_hot_stl_toy(dataset: Dataset, num_samples: int = -1, star_pos: str = 'top_left') -> list:
     """
     Prepares a toy STL dataset with one-hot encoding.
 
@@ -247,34 +247,59 @@ def one_hot_stl_toy(dataset: Dataset, num_samples: int = -1) -> list:
     adjusted = []
     for idx, (ex, label) in enumerate(subset):
         if label == 9:
-            ex = draw_star(ex, 1, c=2)
+            ex = draw_star(ex, 1, c=2, star_pos=star_pos)
             y = 1
         else:
-            ex = draw_star(ex, 0)
+            ex = draw_star(ex, 0, star_pos=star_pos)
             y = 0
         ex = ex.flatten()
         adjusted.append((ex, labelset[y]))
     return adjusted
 
 
-def draw_star(ex: torch.Tensor, v: float, c: int = 3) -> torch.Tensor:
+def draw_star(ex: torch.Tensor, v: float, c: int = 3, star_pos: str = 'top_left') -> torch.Tensor:
     """
-    Draws a star shape on an image tensor.
+    Draws a star shape on an image tensor, with an option to specify the starting corner.
 
     Parameters:
     ex (torch.Tensor): The image tensor.
     v (float): The value to use for drawing the star.
     c (int): The number of channels to draw on.
+    star_pos (str): The corner from which to start drawing the star ('top_left' or 'bottom_right').
 
     Returns:
     torch.Tensor: The image tensor with a star drawn on it.
     """
-    ex[:c, 5:6, 7:14] = v
-    ex[:c, 4, 9:12] = v
-    ex[:c, 3, 10] = v
-    ex[:c, 6, 8:13] = v
-    ex[:c, 7, 9:12] = v
-    ex[:c, 8, 8:13] = v
-    ex[:c, 9, 8:10] = v
-    ex[:c, 9, 11:13] = v
+    if star_pos == 'top_left':
+        # Coordinates for drawing the star from the top-left corner
+        coords = [
+            (slice(None, c), slice(5, 6), slice(7, 14)),
+            (slice(None, c), slice(4, 5), slice(9, 12)),
+            (slice(None, c), slice(3, 4), slice(10, 11)),
+            (slice(None, c), slice(6, 7), slice(8, 13)),
+            (slice(None, c), slice(7, 8), slice(9, 12)),
+            (slice(None, c), slice(8, 9), slice(8, 13)),
+            (slice(None, c), slice(9, 10), slice(8, 10)),
+            (slice(None, c), slice(9, 10), slice(11, 13)),
+        ]
+    elif star_pos == 'bottom_right':
+        # Assuming the image tensor shape is [channels, height, width]
+        _, H, W = ex.shape
+        # Adjusted coordinates for drawing the star from the bottom-right corner
+        coords = [
+            (slice(None, c), slice(H-6, H-5), slice(W-14, W-7)),
+            (slice(None, c), slice(H-5, H-4), slice(W-12, W-9)),
+            (slice(None, c), slice(H-4, H-3), slice(W-11, W-10)),
+            (slice(None, c), slice(H-7, H-6), slice(W-13, W-8)),
+            (slice(None, c), slice(H-8, H-7), slice(W-12, W-9)),
+            (slice(None, c), slice(H-9, H-8), slice(W-13, W-8)),
+            (slice(None, c), slice(H-10, H-9), slice(W-10, W-8)),
+            (slice(None, c), slice(H-10, H-9), slice(W-13, W-11)),
+        ]
+    else:
+        raise ValueError("Invalid 'star_pos' value. Choose either 'top_left' or 'bottom_right'.")
+
+    for coord in coords:
+        ex[coord] = v
+
     return ex
