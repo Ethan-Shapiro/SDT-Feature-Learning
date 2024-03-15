@@ -80,7 +80,7 @@ The CelebA (Celebrity Attributes) dataset is a large-scale face attributes datas
 
 We use CelebA as it is a great benchmark for how well the model can learn features, as the different labels (like smiling) make it immediately obvious which part of the image to pay attention to. It's also a harder task than MNIST to accomplish, so it's a better test of working on real world data that isn't as uniform and cleaned to perfection. Below is our NFM's from our first quarter project trained on a traditional Neural Network.
 
-![CelebA Various Feature NFM's from Neural Network and Soft Decision Tree Comparison](celeba_features_nfms.jpg)
+![CelebA Various Feature NFM's from Neural Network and Soft Decision Tree Comparison](<img src="./assets/models_nfms.png"/>)
 
 These Neural Feature Matrices of each classification task clearly show how the model focuses on the portions of the image which are important to the task at hand. This is what we hope for, as it's important that the model does a good job.
 
