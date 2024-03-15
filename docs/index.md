@@ -95,8 +95,6 @@ The STL-10 (Self Taught Learning 10) dataset is a rich resource for developing a
 <img src="./assets/stl_star_nfm.png"/>
 
 
-## Gradient Boosted Decision Trees 🌲
+## Future Work? 🔮
 ---
-
-## What can this mean for the future? 🔮
----
+For future work that expands on this idea, we aim to further this notion of feature learning by the Deep Neural Feature Ansatz, and investigate how features are learned in other models, namely decision trees. Although the recent excitement around machine learning has been in regards to deep neural networks (DNNs), there are lots of other models used in production, one of which being decision trees. Decision trees are also quite popular, however they get even better when paired with ensemble methods, such as XGBoost. Similar to DNNs, we know that XGBoost works quite well in lots of tasks, however we are not quite certain as to how things are being learned internally. As such, for our quarter 2 project, we will be investigating how XGBoost determines which features are important. 
