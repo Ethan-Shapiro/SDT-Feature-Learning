@@ -76,7 +76,7 @@ The MNIST dataset, short for the Modified National Institute of Standards and Te
 
 With our MNIST dataset, we were able to replicate the original findings of the creators of the Soft Decision Tree, verifying that the results were attainable. This dataset also allowed us to verify that the Neural Feature Matrix could be computed on a SDT. Finally, it easy to understand the decision paths of the tree, with the details of each digit being clearly defined. Take a look at the tree below labeled with NFM's at each split and the decision paths of each digit.
 
-![MNIST Tree with NFM's and Decision Paths](mnist_tree.jpg)
+<img src="./assets/tree.png"/>
 
 ### CelebA 🏆
 
